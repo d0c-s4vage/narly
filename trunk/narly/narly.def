@@ -1,0 +1,8 @@
+LIBRARY	"narly"
+VERSION 0.1
+EXPORTS
+
+DebugExtensionInitialize PRIVATE
+DebugExtensionUninitialize PRIVATE
+
+nmod
