@@ -40,6 +40,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/MT /MD"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;C:\Program Files\Debugging Tools for Windows (x64)\sdk\inc&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;NARLY_EXPORTS"
@@ -116,6 +117,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/MT /MD"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				AdditionalIncludeDirectories="&quot;C:\Program Files\Debugging Tools for Windows (x64)\sdk\inc&quot;"
