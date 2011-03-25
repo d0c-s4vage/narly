@@ -1,7 +1,6 @@
 // narly.cpp
 // N for gnarly!
 
-#include "stdafx.h"
 #include "narly.h"
 #include "tokenizer.h"
 
