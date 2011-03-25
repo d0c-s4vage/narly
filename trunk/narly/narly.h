@@ -4,6 +4,14 @@
 #ifndef _NARLY_H
 #define _NARLY_H
 
+#include <windows.h>
+#include <wdbgexts.h>
+#include <dbgeng.h>
+#include <vector>
+#include <ios>
+#include <iostream>
+#include <sstream>
+
 bool g_DebugMode = false;
 PDEBUG_SYMBOLS3 g_DebugSymbols;
 PDEBUG_CONTROL4 g_DebugControl;
