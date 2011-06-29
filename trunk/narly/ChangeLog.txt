@@ -1,3 +1,7 @@
+06/29/2011
+----------
+* [issue 3] narly can now be built for x64 platforms
+
 03/25/2011
 ----------
 * [issue 1] compiler option added to make narly.dll independent of msvcrt90.dll
