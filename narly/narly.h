@@ -89,7 +89,7 @@ namespace ModuleUtils {
 	};
 
 	bool hasSafeSEH(ULONG moduleIndex) {
-		IMAGE_LOAD_CONFIG_DIRECTORY32 moduleConfig;
+		IMAGE_LOAD_CONFIG_DIRECTORY moduleConfig;
 		IMAGE_NT_HEADERS64 moduleHeaders;
 		DWORD loadConfigSize;
 		ULONG bytesRead=0;
