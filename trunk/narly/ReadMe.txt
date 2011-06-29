@@ -10,8 +10,6 @@ may also ping me directly to see if anything new is on its way. Also, if you fin
 this extension, please file a bug at https://code.google.com/p/narly/issues.  In case you
 can't file a bug (permissions error or something), ping me.
 
-Also note that as of today (2/26/2011), this has only been tested/made for x86 Windows.
-
 Example:
 
 To "install", copy narly.dll into the winext folder for windbg. The path to the winext folder
