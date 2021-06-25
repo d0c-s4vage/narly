@@ -2,10 +2,10 @@
 //
 
 #include <stdio.h>
-#include "dll_all.h"
-#include "dll_seh_aslr.h"
-#include "dll_seh_dep.h"
-#include "dll_safeseh_gs.h"
+#include "..\dll_all\dll_all.h"
+#include "..\dll_seh_aslr\dll_seh_aslr.h"
+#include "..\dll_seh_dep\dll_seh_dep.h"
+#include "..\dll_safeseh_gs\dll_safeseh_gs.h"
 
 int main()
 {
