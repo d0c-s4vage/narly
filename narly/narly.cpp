@@ -125,6 +125,8 @@ HRESULT CALLBACK nmod(PDEBUG_CLIENT4 Client, PCSTR args) {
 		return S_OK;
 	}
 
+	bool isSystem = false;
+	extern ModuleUtils::PREBASE myBase;
 	BOOL unloadedModulesPrinted = false;
 	ULONG i=0, numModulesLoaded=0, numModulesUnloaded=0, currModuleNameSize=0,
 		  currImageNameSize=0, currLoadedImageNameSize=0;
@@ -135,6 +137,47 @@ HRESULT CALLBACK nmod(PDEBUG_CLIENT4 Client, PCSTR args) {
 	CHAR currLoadedImageName[1024]; memset(currLoadedImageName, 0, sizeof(currLoadedImageName));
 
 	g_DebugSymbols->GetNumberModules(&numModulesLoaded, &numModulesUnloaded);
+
+	while (g_DebugSymbols->GetModuleByIndex(i, &currModuleBase) == S_OK) {
+		g_DebugDataSpaces->ReadImageNtHeaders(currModuleBase, &currModuleHeaders);
+		g_DebugSymbols->GetModuleNames(i, currModuleBase, currImageName, sizeof(currImageName) - 1,
+			&currImageNameSize, currModuleName, sizeof(currModuleName) - 1,
+			&currModuleNameSize, currLoadedImageName, sizeof(currLoadedImageName) - 1,
+			&currLoadedImageNameSize);
+
+		DEBUG("\ninspecting module %d: %s\n", i, (strlen(currModuleName) == 0 ? currImageName : currModuleName));
+
+		ModuleUtils::insertModNode(
+			(DWORD)currModuleHeaders.OptionalHeader.ImageBase, 
+			currModuleName
+		);
+
+		currModuleBase = 0;
+		memset(&currModuleHeaders, 0, sizeof(currModuleHeaders));
+		memset(currModuleName, 0, sizeof(currModuleName));
+		memset(currImageName, 0, sizeof(currImageName));
+		memset(currLoadedImageName, 0, sizeof(currLoadedImageName));
+		i++;
+	}
+
+	ModuleUtils::VerifyModBase();
+	i = 0;
+
+	dprintf("%-8s|%-8s|%-8s|%-20s|%-8s|%-13s|%-8s|%-3s|%-5s|%-4s|%-12s|%s\n",
+		"|Base",
+		"Top",
+		"Size",
+		"Module",
+		"Rebase",
+		"Potential",
+		"SafeSEH",
+		"GS",
+		"ASLR",
+		"DEP",
+		"System File",
+		"Path");
+	dprintf("------------------------------------------------------------------");
+	dprintf("-----------------------------------------------\n");
 
 	while(g_DebugSymbols->GetModuleByIndex(i, &currModuleBase) == S_OK) {
 		g_DebugSymbols->GetModuleNames(i, currModuleBase, currImageName, sizeof(currImageName)-1,
@@ -156,15 +199,29 @@ HRESULT CALLBACK nmod(PDEBUG_CLIENT4 Client, PCSTR args) {
 										 (DWORD)currModuleBase+currModuleHeaders.OptionalHeader.SizeOfImage,
 										  currImageName);
 		} else {
-			dprintf("%08x %08x %-20s %-12s %-3s %-5s %-4s %s\n",
-							(DWORD)currModuleBase,
-							(DWORD)currModuleBase+currModuleHeaders.OptionalHeader.SizeOfImage,
-							currModuleName,
-							(ModuleUtils::hasSEH(i) ? (ModuleUtils::hasSafeSEH(i) ? "/SafeSEH ON" : "/SafeSEH OFF") : "NO_SEH"),
-							(ModuleUtils::hasGS(i) ? "/GS" : ""),
-							(ModuleUtils::isDynBaseCompat(i) ? "*ASLR" : ""),
-							(ModuleUtils::isNXCompat(i) ? "*DEP" : ""),
-							currImageName);
+			if (strstr(currImageName, "Windows\\System32") ||
+				strstr(currImageName, "Windows\\system32") ||
+				strstr(currImageName, "Windows\\SYSTEM32") ||
+				strstr(currImageName, "Windows\\SysWOW64") ||
+				strstr(currImageName, "Windows\\WinSxS")) {
+				isSystem = true;
+			}
+			else {
+				isSystem = false;
+			}
+			dprintf("%08x %08x %08x %-20s %-8s %-13s %-8s %-3s %-5s %-4s %-12s %s\n",
+				(DWORD)currModuleBase,
+				(DWORD)currModuleBase + currModuleHeaders.OptionalHeader.SizeOfImage,
+				(DWORD)currModuleHeaders.OptionalHeader.SizeOfImage,
+				currModuleName,
+				(ModuleUtils::isReBase(i, (DWORD)currModuleBase) ? "*REBASED" : ""),
+				(ModuleUtils::PrintRebase(currModuleName) ? "*COULD_REBASE" : ""),
+				(ModuleUtils::hasSEH(i) ? (ModuleUtils::hasSafeSEH(i) ? "ON" : "OFF") : "NO_SEH"),
+				(ModuleUtils::hasGS(i) ? "/GS" : ""),
+				(ModuleUtils::isDynBaseCompat(i) ? "*ASLR" : ""),
+				(ModuleUtils::isNXCompat(i) ? "*DEP" : ""),
+				isSystem ? "True" : "False",
+				currImageName);
 		}
 
 		currModuleBase = 0;
@@ -176,6 +233,8 @@ HRESULT CALLBACK nmod(PDEBUG_CLIENT4 Client, PCSTR args) {
 	}
 
 	dprintf("\n*DEP/*ASLR means that these modules are compatible with ASLR/DEP\n");
+	dprintf("*COULD_REBASE means that the module has the same base address of another loaded module\n");
+	dprintf("*REBASED means the module was rebased and the current base address differs from the original\n");
 
     ExtRelease();
 	return S_OK;

@@ -31,6 +31,78 @@ EXT_API_VERSION g_ExtApiVersion = {1,1,EXT_API_VERSION_NUMBER,0} ;
 
 namespace ModuleUtils {
 
+	typedef struct _REBASE {
+		DWORD baseAddr = 0;
+		//DWORD loaded = 0;
+		char name[1024] = { 0 };
+		bool flag = 0;
+		struct _REBASE* next = nullptr;
+	} REBASE, * PREBASE;
+
+	PREBASE myBase = nullptr;
+
+	//void insertModNode(DWORD ImageBase, DWORD currModuleBase, char* currModuleName) {
+	void insertModNode(DWORD ImageBase, char* currModuleName) {
+		PREBASE newNode = new _REBASE();
+
+		newNode->baseAddr = ImageBase;
+		//newNode->loaded = currModuleBase;
+		strcpy_s(newNode->name, 1023, currModuleName);
+
+		newNode->next = myBase;
+		myBase = newNode;
+	}
+
+	void VerifyModBase(void) {
+		PREBASE temp = myBase;
+		PREBASE temp2 = myBase;
+
+		while (temp != nullptr) {
+			while (temp2 != nullptr) {
+				if ((temp->baseAddr == temp2->baseAddr) &&
+					(strcmp(temp->name, temp2->name) != 0)) {
+					temp->flag = true;
+				}
+				temp2 = temp2->next;
+			}
+			temp = temp->next;
+			temp2 = myBase;
+		}
+	}
+
+	bool PrintRebase(char* currModuleName) {
+		PREBASE temp = myBase;
+
+		while (temp != nullptr) {
+			if (0 == strcmp(temp->name, currModuleName)) {
+				return temp->flag;
+			}
+			temp = temp->next;
+		}
+
+		return false;
+	}
+
+	bool isReBase(ULONG moduleIndex, DWORD currModuleBase) {
+		IMAGE_NT_HEADERS64 moduleHeaders;
+		ULONG64 moduleBase;
+		g_DebugSymbols->GetModuleByIndex(moduleIndex, &moduleBase);
+		g_DebugDataSpaces->ReadImageNtHeaders(moduleBase, &moduleHeaders);
+
+		DEBUG("\n  Checking for REBASE\n");
+
+		if (moduleHeaders.OptionalHeader.ImageBase == currModuleBase) {
+			DEBUG("    IMAGE_OPTIONAL_HEADER.ImageBase is the same as the currently loaded ImageBase\n");
+			DEBUG("      -is not REBASED!\n");
+			return false;
+		}
+		else {
+			DEBUG("    IMAGE_OPTIONAL_HEADER.ImageBase is not the same as the currently loaded ImageBase\n");
+			DEBUG("      -is REBASED\n");
+			return true;
+		}
+	};
+
 	bool hasSEH(ULONG moduleIndex) {
 		IMAGE_NT_HEADERS64 moduleHeaders;
 		ULONG64 moduleBase;
