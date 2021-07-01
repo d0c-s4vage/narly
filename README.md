@@ -9,7 +9,7 @@ Updated for VS 2019 and incorporated total size, module rebase/potential to reba
 
 Original work all goes to d0c-s4vage for an amazing tool!
 
-0:004> !nmod
+<pre><code>0:004> !nmod
 |Base   |Top     |Size    |Module              |Rebase  |Potential    |SafeSEH |GS |ASLR |DEP |System File |Path
 ----------------------------------------------------------------------------------------------------------------
 00400000 0054d000 0014d000 DVDXPlayer                    *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\DVDXPlayer.EXE
@@ -108,4 +108,4 @@ Unloaded modules:
 
 *DEP/*ASLR means that these modules are compatible with ASLR/DEP
 *COULD_REBASE means that the module has the same base address of another loaded module
-*REBASED means the module was rebased and the current base address differs from the original
+*REBASED means the module was rebased and the current base address differs from the original</pre></code>
