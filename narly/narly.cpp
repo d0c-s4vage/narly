@@ -176,7 +176,7 @@ HRESULT CALLBACK nmod(PDEBUG_CLIENT4 Client, PCSTR args) {
 		"DEP",
 		"System File",
 		"Path");
-	dprintf("------------------------------------------------------------------");
+	dprintf("-----------------------------------------------------------------");
 	dprintf("-----------------------------------------------\n");
 
 	while(g_DebugSymbols->GetModuleByIndex(i, &currModuleBase) == S_OK) {
