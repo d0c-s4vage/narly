@@ -9,39 +9,7 @@ Updated for VS 2019 and incorporated total size, module rebase/potential to reba
 
 Original work all goes to d0c-s4vage for an amazing tool!
 
-<pre><code>0:004> .load narly
-
-      __s|I}*!{a.                        ._s,aan2*a
-     _wY1+~-    )S,                     .ae"~=:...:X
-   .vXl+:.       -4c                   <2+=|==::..:d
-   vvi=;..        -?o,                =2=+==:::...=d
-  )nv=:.            )5,              .2=--.......-=d
-  ue+::              -*s             <c .        .=d
-  m>==::..     ._,     <s,           )c           :d
-  #==viii|===; {Xs=,    -{s          )c         ..:d
-  Z;{nnonnvvii;v(-{%=.    ~s,        )e:====||iiv%=d
-  X={oooonvvIl;3;  -{%,    -*>       )2<onnnnvnnnn>d
-  X=)vvvvIliii:3;    -!s.   :)s.     )e<oonvlllllIid
-  X=<lllliii|=:n;      -1c.  +|1,    )z<nvii||+|+|vX
-  S=<lli|||=:: n;        "nc  -s%;   )c=ovl|++==+=vo
-  X=<i||+=; . .n`          "1>.-{%i. )c<Xnnli||++=vn
-  X=iii>==-.  :o`            "1,:+iI,)c:Sonnvli||=v(
-  X>{ii+;:-  .u(               "o,-{Iw(:nvvvllii=v2
-  S=i||;:. .=u(                 -!o,+I(:iiillii|ie`
-  2>v|==__su?`                    -?o,-:==||iisv"
-  {nvnI!""~                         -!sasvv}""`
-
-             by Nephi Johnson (d0c_s4vage)
-                      N for gnarly!
-            Additional Capabilities Added by
-               @TheCyberBebop & @Kerpanic
-
-Available commands:
-
-    !nmod     - display Bad Characters, REBASE, /SafeSEH, /GS,
-                DEP, and ASLR info for all loaded modules
-
-0:004> !nmod /help
+<pre><code>0:004> !nmod /help
 Summary:
 
     !nmod lists all of the loaded and unloaded modules, displaying
