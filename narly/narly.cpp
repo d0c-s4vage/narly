@@ -37,6 +37,11 @@ void ExtRelease(void) {
 		(*unknowns[i])->Release();
 		*unknowns[i] = NULL;
 	}
+
+	// reset options to default settings for rerun
+	g_BadCharacters = false;
+	g_DebugMode = false;
+	ModuleUtils::DeleteModNodes();
 }
 
 // The entry point for the extension
@@ -103,6 +108,55 @@ extern "C" HRESULT CALLBACK DebugExtensionUninitialize(void) {
 HRESULT CALLBACK nmod(PDEBUG_CLIENT4 Client, PCSTR args) {
     INIT_API();
 
+	CHAR badChars[1025] = { 0 };
+
+	if (strstr(args, "/b ")) {
+		CHAR testInput[3] = { 0 };
+		PCSTR token = "\\x";
+		size_t inputLen = 0;
+
+		DEBUG("\n  Parsing Bad Characters input\n");
+
+		// verify the input legnth is not greater then our buffer
+		inputLen = strcspn(args + 3, " ");
+		if (1025 <= inputLen) {
+			dprintf("[-] Max Bad character input is 256 bad charcters!\n");
+
+			ExtRelease();
+			return S_OK;
+		}
+
+		// copy badchars string
+		strncpy_s(badChars, 
+			sizeof(badChars) / sizeof(badChars[0]), 
+			args + 3, // skip "\b "
+			inputLen
+		);
+
+		DEBUG("    Bad Characters input: %s\n", badChars);
+		DEBUG("    Length of input: %d\n", inputLen);
+
+		// verify input format -- E.g. \x90\x22\x0a -- *MUST* have \x followed by *TWO* numerical values
+		for (size_t i = 0; i < strlen(badChars); i += 4) {
+			strncpy_s(testInput, 
+				sizeof(testInput) / sizeof(testInput[0]), 
+				badChars + i, 
+				(sizeof(testInput) / sizeof(testInput[0])) - 1
+			);
+
+			DEBUG("    Verifing input format (\\x): %s\n", testInput);
+
+			if (0 != strcmp(testInput, token)) {
+				dprintf("[-] Bad character input error -- verify format! (e.g. /b \\x0a\\x0d\\x22)\n");
+
+				ExtRelease();
+				return S_OK;
+			}
+		}
+
+		g_BadCharacters = true;
+	}
+
 	if(strstr(args, "/debug") || strstr(args, "/v") || strstr(args, "/verbose")) {
 		g_DebugMode = true;
 	}
@@ -113,8 +167,11 @@ HRESULT CALLBACK nmod(PDEBUG_CLIENT4 Client, PCSTR args) {
 				"    !nmod lists all of the loaded and unloaded modules, displaying\n"
 				"    info on /SafeSEH, NO_SEH, /GS, and ASLR and DEP compatibility\n"
 				"\n"
-				"Usage:  !nmod [/v /help]\n"
+				"Usage:  !nmod [/b [hex_values] /v /help]\n"
 				"\n"
+			    "    /b     - Check most significant byte for bad characters\n"
+			    "    /b \\x00\\x0a\\x0d\n"
+			    "\n"
 				"    /debug -  Display verbose output\n"
 				"    /verbose\n"
 				"    /v\n"
@@ -126,7 +183,7 @@ HRESULT CALLBACK nmod(PDEBUG_CLIENT4 Client, PCSTR args) {
 	}
 
 	bool isSystem = false;
-	extern ModuleUtils::PREBASE myBase;
+	extern ModuleUtils::PREBASE myBase; // module node
 	BOOL unloadedModulesPrinted = false;
 	ULONG i=0, numModulesLoaded=0, numModulesUnloaded=0, currModuleNameSize=0,
 		  currImageNameSize=0, currLoadedImageNameSize=0;
@@ -163,11 +220,12 @@ HRESULT CALLBACK nmod(PDEBUG_CLIENT4 Client, PCSTR args) {
 	ModuleUtils::VerifyModBase();
 	i = 0;
 
-	dprintf("%-8s|%-8s|%-8s|%-20s|%-8s|%-13s|%-8s|%-3s|%-5s|%-4s|%-12s|%s\n",
+	dprintf("%-8s|%-8s|%-8s|%-20s|%-15s|%-8s|%-13s|%-8s|%-3s|%-5s|%-4s|%-12s|%s\n",
 		"|Base",
 		"Top",
 		"Size",
 		"Module",
+		"Bad Characters",
 		"Rebase",
 		"Potential",
 		"SafeSEH",
@@ -177,7 +235,7 @@ HRESULT CALLBACK nmod(PDEBUG_CLIENT4 Client, PCSTR args) {
 		"System File",
 		"Path");
 	dprintf("-----------------------------------------------------------------");
-	dprintf("-----------------------------------------------\n");
+	dprintf("---------------------------------------------------------------\n");
 
 	while(g_DebugSymbols->GetModuleByIndex(i, &currModuleBase) == S_OK) {
 		g_DebugSymbols->GetModuleNames(i, currModuleBase, currImageName, sizeof(currImageName)-1,
@@ -198,22 +256,25 @@ HRESULT CALLBACK nmod(PDEBUG_CLIENT4 Client, PCSTR args) {
 			dprintf("%08x %08x %-20s\n", (DWORD)currModuleBase,
 										 (DWORD)currModuleBase+currModuleHeaders.OptionalHeader.SizeOfImage,
 										  currImageName);
-		} else {
+		} else { // will generate a false negative when the path is not included with system modules
 			if (strstr(currImageName, "Windows\\System32") ||
 				strstr(currImageName, "Windows\\system32") ||
 				strstr(currImageName, "Windows\\SYSTEM32") ||
 				strstr(currImageName, "Windows\\SysWOW64") ||
 				strstr(currImageName, "Windows\\WinSxS")) {
+
 				isSystem = true;
 			}
 			else {
 				isSystem = false;
 			}
-			dprintf("%08x %08x %08x %-20s %-8s %-13s %-8s %-3s %-5s %-4s %-12s %s\n",
+
+			dprintf("%08x %08x %08x %-20s %-15s %-8s %-13s %-8s %-3s %-5s %-4s %-12s %s\n",
 				(DWORD)currModuleBase,
 				(DWORD)currModuleBase + currModuleHeaders.OptionalHeader.SizeOfImage,
 				(DWORD)currModuleHeaders.OptionalHeader.SizeOfImage,
 				currModuleName,
+				g_BadCharacters ? ModuleUtils::checkBadChars(badChars, (DWORD)currModuleBase) : "NOT_CHECKED",
 				(ModuleUtils::isReBase(i, (DWORD)currModuleBase) ? "*REBASED" : ""),
 				(ModuleUtils::PrintRebase(currModuleName) ? "*COULD_REBASE" : ""),
 				(ModuleUtils::hasSEH(i) ? (ModuleUtils::hasSafeSEH(i) ? "ON" : "OFF") : "NO_SEH"),
@@ -235,6 +296,7 @@ HRESULT CALLBACK nmod(PDEBUG_CLIENT4 Client, PCSTR args) {
 	dprintf("\n*DEP/*ASLR means that these modules are compatible with ASLR/DEP\n");
 	dprintf("*COULD_REBASE means that the module has the same base address of another loaded module\n");
 	dprintf("*REBASED means the module was rebased and the current base address differs from the original\n");
+	dprintf("*BADCHARS are *ONLY* checked agaisnt the most significant byte!\n");
 
     ExtRelease();
 	return S_OK;

@@ -12,6 +12,7 @@
 #include <iostream>
 #include <sstream>
 
+bool g_BadCharacters = false;
 bool g_DebugMode = false;
 PDEBUG_SYMBOLS3 g_DebugSymbols;
 PDEBUG_CONTROL4 g_DebugControl;
@@ -21,7 +22,7 @@ WINDBG_EXTENSION_APIS ExtensionApis;
 
 extern "C" HRESULT ExtQuery(PDEBUG_CLIENT4 Client);
 void ExtRelease(void);
-ULONG64 resolveFunctionByName(char *funcName);
+//ULONG64 resolveFunctionByName(char *funcName);
 
 #define DEBUG(...) if(g_DebugMode) { dprintf(__VA_ARGS__); }
 #define INIT_API() HRESULT Status; if ((Status = ExtQuery(Client)) != S_OK) return Status;
@@ -33,54 +34,123 @@ namespace ModuleUtils {
 
 	typedef struct _REBASE {
 		DWORD baseAddr = 0;
-		//DWORD loaded = 0;
-		char name[1024] = { 0 };
-		bool flag = 0;
+		char modName[1024] = { 0 };
+		bool addrFlag = false;
 		struct _REBASE* next = nullptr;
 	} REBASE, * PREBASE;
 
 	PREBASE myBase = nullptr;
 
-	//void insertModNode(DWORD ImageBase, DWORD currModuleBase, char* currModuleName) {
 	void insertModNode(DWORD ImageBase, char* currModuleName) {
 		PREBASE newNode = new _REBASE();
 
+		DEBUG("\n  Creating new module node\n");
+
 		newNode->baseAddr = ImageBase;
-		//newNode->loaded = currModuleBase;
-		strcpy_s(newNode->name, 1023, currModuleName);
+		strcpy_s(newNode->modName, 1023, currModuleName);
+
+		DEBUG("    Current module: %s\n", newNode->modName);
 
 		newNode->next = myBase;
 		myBase = newNode;
 	}
 
 	void VerifyModBase(void) {
-		PREBASE temp = myBase;
-		PREBASE temp2 = myBase;
+		PREBASE tempNode1 = myBase;
+		PREBASE tempNode2 = myBase;
 
-		while (temp != nullptr) {
-			while (temp2 != nullptr) {
-				if ((temp->baseAddr == temp2->baseAddr) &&
-					(strcmp(temp->name, temp2->name) != 0)) {
-					temp->flag = true;
+		DEBUG("\n  Verify no modules have repeating base addresses\n");
+
+		// iterate signle node agaisnt all nodes in linked list
+		while (tempNode1 != nullptr) {
+			DEBUG("    Current module: %s and base address: 0x%08x\n", tempNode1->modName, tempNode1->baseAddr);
+
+			while (tempNode2 != nullptr) {
+				if (0 != strcmp(tempNode1->modName, tempNode2->modName)) { // do not check self
+					DEBUG("    Check against module: %s and base address: 0x%08x\n",
+						tempNode2->modName, tempNode2->baseAddr);
+
+					// verify if baseAddr is repeated
+					if (tempNode1->baseAddr == tempNode2->baseAddr) {
+						DEBUG("    [+] Match found!\n");
+
+						tempNode1->addrFlag = true; // set flag to true for *COULD_REBASE
+					}
 				}
-				temp2 = temp2->next;
+				tempNode2 = tempNode2->next; // next node to test
 			}
-			temp = temp->next;
-			temp2 = myBase;
+			tempNode1 = tempNode1->next; // next node to test
+			tempNode2 = myBase; // reset tempNode2
 		}
 	}
 
 	bool PrintRebase(char* currModuleName) {
-		PREBASE temp = myBase;
+		PREBASE tempNode = myBase;
 
-		while (temp != nullptr) {
-			if (0 == strcmp(temp->name, currModuleName)) {
-				return temp->flag;
+		DEBUG("\n  Checking if module is *REBASED\n");
+
+		// iterate through linked list
+		while (tempNode != nullptr) {
+			// if modName matches currModuleName return addrFlag
+			if (0 == strcmp(tempNode->modName, currModuleName)) {
+				DEBUG("    Current module: %s and flag: %s\n", tempNode->modName, 
+					tempNode->addrFlag ? "true" : "false");
+
+				return tempNode->addrFlag;
 			}
-			temp = temp->next;
+			tempNode = tempNode->next; // next node to test
+		}
+
+		// should only hit here once linked list is done
+		return false;
+	}
+
+	bool DeleteModNodes() {
+		PREBASE current = myBase;
+		PREBASE next = nullptr;
+
+		// iterate through linked list
+		while (nullptr != current) {
+			next = current->next;
+
+			// skip delete of the base node -- for reruns
+			if (nullptr == next) {
+				myBase = nullptr; //reset
+
+				break;
+			}
+
+			delete current; // delete node
+			current = next; // set next node
 		}
 
 		return false;
+	}
+
+	char* checkBadChars(PCSTR badChars, DWORD currModuleBase) {
+		char highByte[3] = { 0 }; // includes NULL byte
+
+		DEBUG("\n  Checking for Bad Characters\n");
+
+		currModuleBase /= 0x1000000; // isolate most significant byte
+		DEBUG("    Current module base address most significant byte: 0x%02x\n", currModuleBase);
+
+		// required for NULL byte when using strstr
+		if (0 == currModuleBase) {
+			strncpy_s(highByte, 3, "00", 2);
+		}
+		else { // convert highByte to string for strstr()
+			_itoa_s(currModuleBase, highByte, 3, 16);
+		}
+
+		// verify if highByte is a bad character
+		if (nullptr != strstr(badChars, highByte)) {
+			DEBUG("    Bad characters: %s\n", badChars);
+
+			return "*BADCHARS";
+		}
+
+		return "";
 	}
 
 	bool isReBase(ULONG moduleIndex, DWORD currModuleBase) {
