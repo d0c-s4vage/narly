@@ -81,11 +81,13 @@ extern "C" HRESULT CALLBACK DebugExtensionInitialize(PULONG Version, PULONG Flag
 	dprintf("\n");
 	dprintf("             by Nephi Johnson (d0c_s4vage)\n");
 	dprintf("                      N for gnarly!\n");
+	dprintf("            Addtional Capabilities Added by\n");
+	dprintf("               @TheCyberBebop, @Kerpanic\n");
 	dprintf("\n");
 	dprintf("Available commands:\n"
 			"\n"
-			"    !nmod     - display /SafeSEH, /GS, DEP, and ASLR info for\n"
-			"                all loaded modules\n"
+			"    !nmod     - display Bad Characters, REBASE, /SafeSEH, /GS,\n"
+		    "                DEP, and ASLR info for all loaded modules\n"
 			"\n");
 
     return S_OK;
@@ -108,6 +110,10 @@ extern "C" HRESULT CALLBACK DebugExtensionUninitialize(void) {
 HRESULT CALLBACK nmod(PDEBUG_CLIENT4 Client, PCSTR args) {
     INIT_API();
 
+	if(strstr(args, "/debug") || strstr(args, "/v") || strstr(args, "/verbose")) {
+		g_DebugMode = true;
+	}
+
 	CHAR badChars[1025] = { 0 };
 
 	if (strstr(args, "/b ")) {
@@ -127,8 +133,8 @@ HRESULT CALLBACK nmod(PDEBUG_CLIENT4 Client, PCSTR args) {
 		}
 
 		// copy badchars string
-		strncpy_s(badChars, 
-			sizeof(badChars) / sizeof(badChars[0]), 
+		strncpy_s(badChars,
+			sizeof(badChars) / sizeof(badChars[0]),
 			args + 3, // skip "\b "
 			inputLen
 		);
@@ -136,17 +142,18 @@ HRESULT CALLBACK nmod(PDEBUG_CLIENT4 Client, PCSTR args) {
 		DEBUG("    Bad Characters input: %s\n", badChars);
 		DEBUG("    Length of input: %d\n", inputLen);
 
-		// verify input format -- E.g. \x90\x22\x0a -- *MUST* have \x followed by *TWO* numerical values
+		// verify input format -- E.g. \x90\x22\x0a -- *MUST* have \x followed by *TWO* digits
 		for (size_t i = 0; i < strlen(badChars); i += 4) {
-			strncpy_s(testInput, 
-				sizeof(testInput) / sizeof(testInput[0]), 
-				badChars + i, 
+			strncpy_s(testInput,
+				sizeof(testInput) / sizeof(testInput[0]),
+				badChars + i,
 				(sizeof(testInput) / sizeof(testInput[0])) - 1
 			);
 
 			DEBUG("    Verifing input format (\\x): %s\n", testInput);
 
-			if (0 != strcmp(testInput, token)) {
+			// catch missing "\x" or final hex values not being two digits
+			if (0 != strcmp(testInput, token) || 4 > strlen(badChars + i)) {
 				dprintf("[-] Bad character input error -- verify format! (e.g. /b \\x0a\\x0d\\x22)\n");
 
 				ExtRelease();
@@ -157,15 +164,12 @@ HRESULT CALLBACK nmod(PDEBUG_CLIENT4 Client, PCSTR args) {
 		g_BadCharacters = true;
 	}
 
-	if(strstr(args, "/debug") || strstr(args, "/v") || strstr(args, "/verbose")) {
-		g_DebugMode = true;
-	}
-
 	if(strstr(args, "help") || strstr(args, "/?")) {
 		dprintf("Summary:\n"
 				"\n"
 				"    !nmod lists all of the loaded and unloaded modules, displaying\n"
-				"    info on /SafeSEH, NO_SEH, /GS, and ASLR and DEP compatibility\n"
+				"    info on Bad Characters, REBASE, /SafeSEH, NO_SEH, /GS, and\n"
+			    "    ASLR and DEP compatibility\n"
 				"\n"
 				"Usage:  !nmod [/b [hex_values] /v /help]\n"
 				"\n"

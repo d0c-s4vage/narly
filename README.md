@@ -9,23 +9,73 @@ Updated for VS 2019 and incorporated total size, module rebase/potential to reba
 
 Original work all goes to d0c-s4vage for an amazing tool!
 
-<pre><code>0:004> !nmod /b \x00\x0a\x0d\x1a\x20
+<pre><code>0:004> .load narly
+
+      __s|I}*!{a.                        ._s,aan2*a
+     _wY1+~-    )S,                     .ae"~=:...:X
+   .vXl+:.       -4c                   <2+=|==::..:d
+   vvi=;..        -?o,                =2=+==:::...=d
+  )nv=:.            )5,              .2=--.......-=d
+  ue+::              -*s             <c .        .=d
+  m>==::..     ._,     <s,           )c           :d
+  #==viii|===; {Xs=,    -{s          )c         ..:d
+  Z;{nnonnvvii;v(-{%=.    ~s,        )e:====||iiv%=d
+  X={oooonvvIl;3;  -{%,    -*>       )2<onnnnvnnnn>d
+  X=)vvvvIliii:3;    -!s.   :)s.     )e<oonvlllllIid
+  X=<lllliii|=:n;      -1c.  +|1,    )z<nvii||+|+|vX
+  S=<lli|||=:: n;        "nc  -s%;   )c=ovl|++==+=vo
+  X=<i||+=; . .n`          "1>.-{%i. )c<Xnnli||++=vn
+  X=iii>==-.  :o`            "1,:+iI,)c:Sonnvli||=v(
+  X>{ii+;:-  .u(               "o,-{Iw(:nvvvllii=v2
+  S=i||;:. .=u(                 -!o,+I(:iiillii|ie`
+  2>v|==__su?`                    -?o,-:==||iisv"
+  {nvnI!""~                         -!sasvv}""`
+
+             by Nephi Johnson (d0c_s4vage)
+                      N for gnarly!
+            Addtional Capabilities Added by
+               @TheCyberBebop, @Kerpanic
+
+Available commands:
+
+    !nmod     - display Bad Characters, REBASE, /SafeSEH, /GS,
+                DEP, and ASLR info for all loaded modules
+
+0:004> !nmod /help
+Summary:
+
+    !nmod lists all of the loaded and unloaded modules, displaying
+    info on Bad Characters, REBASE, /SafeSEH, NO_SEH, /GS, and
+    ASLR and DEP compatibility
+
+Usage:  !nmod [/b [hex_values] /v /help]
+
+    /b     - Check most significant byte for bad characters
+    /b \x00\x0a\x0d
+
+    /debug -  Display verbose output
+    /verbose
+    /v
+
+    help   -  Who knows what this might do.  I wouldn't try it if
+    /?        I were you though.
+0:004> !nmod /b \x00\x0a\x0d\x1a\x20
 |Base   |Top     |Size    |Module              |Bad Characters |Rebase  |Potential    |SafeSEH |GS |ASLR |DEP |System File |Path
 --------------------------------------------------------------------------------------------------------------------------------
 00400000 0054d000 0014d000 DVDXPlayer           *BADCHARS                              OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\DVDXPlayer.EXE
-02480000 024a9000 00029000 PowerManagementCtrl  *BADCHARS       *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\PowerManagementCtrl.dll
-024e0000 0250c000 0002c000 FileAssocator        *BADCHARS       *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\FileAssocator.dll
-02510000 02520000 00010000 QTMediaControl       *BADCHARS       *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\QTMediaControl.dll
-02530000 02544000 00014000 RealMediaControl     *BADCHARS       *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\RealMediaControl.dll
-02690000 026a4000 00014000 applog               *BADCHARS       *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\applog.dll
-026c0000 026f0000 00030000 VideoWindow          *BADCHARS       *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\VideoWindow.dll
-02930000 02946000 00016000 DibLibDll            *BADCHARS       *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\DibLibDll.dll
-02950000 0297a000 0002a000 AudioProcess         *BADCHARS       *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\AudioProcess.dll
-02990000 029dd000 0004d000 RecorderCtrl         *BADCHARS       *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\RecorderCtrl.dll
-02b00000 02b8f000 0008f000 FileConverter        *BADCHARS       *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\FileConverter.dll
-02ba0000 02bb4000 00014000 ProfileStore         *BADCHARS       *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\ProfileStore.DLL
-02bd0000 02beb000 0001b000 mlutil               *BADCHARS       *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\mlutil.dll
-02c50000 02cb8000 00068000 ProfileManager       *BADCHARS       *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\ProfileManager.dll
+02480000 024a9000 00029000 PowerManagementCtrl                  *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\PowerManagementCtrl.dll
+024e0000 0250c000 0002c000 FileAssocator                        *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\FileAssocator.dll
+02510000 02520000 00010000 QTMediaControl                       *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\QTMediaControl.dll
+02530000 02544000 00014000 RealMediaControl                     *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\RealMediaControl.dll
+02690000 026a4000 00014000 applog                               *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\applog.dll
+026c0000 026f0000 00030000 VideoWindow                          *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\VideoWindow.dll
+02930000 02946000 00016000 DibLibDll                            *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\DibLibDll.dll
+02950000 0297a000 0002a000 AudioProcess                         *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\AudioProcess.dll
+02990000 029dd000 0004d000 RecorderCtrl                         *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\RecorderCtrl.dll
+02b00000 02b8f000 0008f000 FileConverter                        *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\FileConverter.dll
+02ba0000 02bb4000 00014000 ProfileStore                         *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\ProfileStore.DLL
+02bd0000 02beb000 0001b000 mlutil                               *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\mlutil.dll
+02c50000 02cb8000 00068000 ProfileManager                       *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\ProfileManager.dll
 10000000 10018000 00018000 SkinScrollBar                                 *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\SkinScrollBar.Dll
 55d20000 55d4c000 0002c000 oledlg                                                      ON       /GS *ASLR *DEP True         C:\Windows\SYSTEM32\oledlg.dll
 55d50000 55dbd000 0006d000 WINSPOOL                                                    ON       /GS *ASLR *DEP True         C:\Windows\SYSTEM32\WINSPOOL.DRV

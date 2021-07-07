@@ -133,15 +133,16 @@ namespace ModuleUtils {
 		DEBUG("\n  Checking for Bad Characters\n");
 
 		currModuleBase /= 0x1000000; // isolate most significant byte
-		DEBUG("    Current module base address most significant byte: 0x%02x\n", currModuleBase);
 
-		// required for NULL byte when using strstr
-		if (0 == currModuleBase) {
-			strncpy_s(highByte, 3, "00", 2);
+		_itoa_s(currModuleBase, highByte, 3, 16);
+
+		// required for any leading zero's
+		if (strlen(highByte) < 2) {
+			highByte[1] = highByte[0];
+			highByte[0] = '0';
 		}
-		else { // convert highByte to string for strstr()
-			_itoa_s(currModuleBase, highByte, 3, 16);
-		}
+
+		DEBUG("    Current module base address most significant byte: \\x%s\n", highByte);
 
 		// verify if highByte is a bad character
 		if (nullptr != strstr(badChars, highByte)) {
