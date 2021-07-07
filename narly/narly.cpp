@@ -81,8 +81,8 @@ extern "C" HRESULT CALLBACK DebugExtensionInitialize(PULONG Version, PULONG Flag
 	dprintf("\n");
 	dprintf("             by Nephi Johnson (d0c_s4vage)\n");
 	dprintf("                      N for gnarly!\n");
-	dprintf("            Addtional Capabilities Added by\n");
-	dprintf("               @TheCyberBebop, @Kerpanic\n");
+	dprintf("            Additional Capabilities Added by\n");
+	dprintf("               @TheCyberBebop & @Kerpanic\n");
 	dprintf("\n");
 	dprintf("Available commands:\n"
 			"\n"
