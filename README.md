@@ -33,8 +33,8 @@ Original work all goes to d0c-s4vage for an amazing tool!
 
              by Nephi Johnson (d0c_s4vage)
                       N for gnarly!
-            Addtional Capabilities Added by
-               @TheCyberBebop, @Kerpanic
+            Additional Capabilities Added by
+               @TheCyberBebop & @Kerpanic
 
 Available commands:
 
