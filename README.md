@@ -60,6 +60,7 @@ Usage:  !nmod [/b [hex_values] /v /help]
 
     help   -  Who knows what this might do.  I wouldn't try it if
     /?        I were you though.
+
 0:004> !nmod /b \x00\x0a\x0d\x1a\x20
 |Base   |Top     |Size    |Module              |Bad Characters |Rebase  |Potential    |SafeSEH |GS |ASLR |DEP |System File |Path
 --------------------------------------------------------------------------------------------------------------------------------
