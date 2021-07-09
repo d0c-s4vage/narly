@@ -127,28 +127,60 @@ namespace ModuleUtils {
 		return false;
 	}
 
-	char* checkBadChars(PCSTR badChars, DWORD currModuleBase) {
-		char highByte[3] = { 0 }; // includes NULL byte
+	char* checkBadChars(PCSTR badChars, DWORD currModuleBase, DWORD currModuleSize) {
+		char currByte[3] = { 0 }; // includes NULL byte
+		DWORD modByte = 0;
 
 		DEBUG("\n  Checking for Bad Characters\n");
 
-		currModuleBase /= 0x1000000; // isolate most significant byte
+		// isolate MSB
+		modByte = currModuleBase / 0x1000000;
+		if (0 != _itoa_s(modByte, currByte, 3, 16)) {
+			DEBUG("    [-] Error while checking for bad characters\n");
 
-		_itoa_s(currModuleBase, highByte, 3, 16);
-
-		// required for any leading zero's
-		if (strlen(highByte) < 2) {
-			highByte[1] = highByte[0];
-			highByte[0] = '0';
+			return "FAILED CHECK";
 		}
 
-		DEBUG("    Current module base address most significant byte: \\x%s\n", highByte);
+		// required for any leading zero's
+		if (strlen(currByte) < 2) {
+			currByte[1] = currByte[0];
+			currByte[0] = '0';
+		}
+
+		DEBUG("    Current module base address most significant byte: \\x%s\n", currByte);
 
 		// verify if highByte is a bad character
-		if (nullptr != strstr(badChars, highByte)) {
+		if (nullptr != strstr(badChars, currByte)) {
 			DEBUG("    Bad characters: %s\n", badChars);
 
 			return "*BADCHARS";
+		}
+
+		// verify if we need to check other bytes for badchars
+		if (0x10101 > currModuleSize) {
+			ZeroMemory(currByte, sizeof(currByte) / sizeof(currByte[0]));
+
+			// isolate second MSB
+			modByte = (currModuleBase / 0x10000) & 0xFF;
+			if (0 != _itoa_s(modByte, currByte, 3, 16)) {
+				DEBUG("    [-] Error while checking for bad characters\n");
+
+				return "FAILED CHECK";
+			}
+
+			// required for any leading zero's
+			if (strlen(currByte) < 2) {
+				currByte[1] = currByte[0];
+				currByte[0] = '0';
+			}
+
+			DEBUG("    Current module base address second most significant byte: \\x%s\n", currByte);
+
+			if (nullptr != strstr(badChars, currByte)) {
+				DEBUG("    Bad characters: %s\n", badChars);
+
+				return "*BADCHARS";
+			}
 		}
 
 		return "";

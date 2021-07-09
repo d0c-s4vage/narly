@@ -80,7 +80,7 @@ extern "C" HRESULT CALLBACK DebugExtensionInitialize(PULONG Version, PULONG Flag
 	dprintf("  {nvnI!\"\"~                         -!sasvv}\"\"`\n");
 	dprintf("\n");
 	dprintf("             by Nephi Johnson (d0c_s4vage)\n");
-	dprintf("                      N for gnarly!\n");
+	dprintf("                      N for gnarly!\n\n");
 	dprintf("            Additional Capabilities Added by\n");
 	dprintf("               @TheCyberBebop & @Kerpanic\n");
 	dprintf("\n");
@@ -278,7 +278,7 @@ HRESULT CALLBACK nmod(PDEBUG_CLIENT4 Client, PCSTR args) {
 				(DWORD)currModuleBase + currModuleHeaders.OptionalHeader.SizeOfImage,
 				(DWORD)currModuleHeaders.OptionalHeader.SizeOfImage,
 				currModuleName,
-				g_BadCharacters ? ModuleUtils::checkBadChars(badChars, (DWORD)currModuleBase) : "NOT_CHECKED",
+				g_BadCharacters ? ModuleUtils::checkBadChars(badChars, (DWORD)currModuleBase, (DWORD)currModuleHeaders.OptionalHeader.SizeOfImage) : "NOT_CHECKED",
 				(ModuleUtils::isReBase(i, (DWORD)currModuleBase) ? "*REBASED" : ""),
 				(ModuleUtils::PrintRebase(currModuleName) ? "*COULD_REBASE" : ""),
 				(ModuleUtils::hasSEH(i) ? (ModuleUtils::hasSafeSEH(i) ? "ON" : "OFF") : "NO_SEH"),
@@ -300,7 +300,7 @@ HRESULT CALLBACK nmod(PDEBUG_CLIENT4 Client, PCSTR args) {
 	dprintf("\n*DEP/*ASLR means that these modules are compatible with ASLR/DEP\n");
 	dprintf("*COULD_REBASE means that the module has the same base address of another loaded module\n");
 	dprintf("*REBASED means the module was rebased and the current base address differs from the original\n");
-	dprintf("*BADCHARS are *ONLY* checked agaisnt the most significant byte!\n");
+	dprintf("*BADCHARS are only checked agaisnt the module base MSB and second MSB, depending on size!\n");
 
     ExtRelease();
 	return S_OK;
