@@ -127,18 +127,13 @@ namespace ModuleUtils {
 		return false;
 	}
 
-	char* checkBadChars(PCSTR badChars, DWORD currModuleBase, DWORD currModuleSize) {
+	bool verifyByte(PCSTR badChars, DWORD modByte) {
 		char currByte[3] = { 0 }; // includes NULL byte
-		DWORD modByte = 0;
 
-		DEBUG("\n  Checking for Bad Characters\n");
-
-		// isolate MSB
-		modByte = currModuleBase / 0x1000000;
 		if (0 != _itoa_s(modByte, currByte, 3, 16)) {
 			DEBUG("    [-] Error while checking for bad characters\n");
 
-			return "FAILED CHECK";
+			return false;
 		}
 
 		// required for any leading zero's
@@ -147,38 +142,33 @@ namespace ModuleUtils {
 			currByte[0] = '0';
 		}
 
-		DEBUG("    Current module base address most significant byte: \\x%s\n", currByte);
+		DEBUG("    Current module base address byte: \\x%s\n", currByte);
 
 		// verify if highByte is a bad character
 		if (nullptr != strstr(badChars, currByte)) {
 			DEBUG("    Bad characters: %s\n", badChars);
 
+			return true;
+		}
+
+		return false;
+	}
+
+	char* checkBadChars(PCSTR badChars, DWORD currModuleBase, DWORD currModuleSize) {
+		DWORD modByte = 0;
+
+		DEBUG("\n  Checking for Bad Characters\n");
+
+		// isolate MSB
+		modByte = currModuleBase / 0x1000000;
+
+		if (verifyByte(badChars, modByte)) {
 			return "*BADCHARS";
 		}
 
-		// verify if we need to check other bytes for badchars
 		if (0x10101 > currModuleSize) {
-			ZeroMemory(currByte, sizeof(currByte) / sizeof(currByte[0]));
-
-			// isolate second MSB
 			modByte = (currModuleBase / 0x10000) & 0xFF;
-			if (0 != _itoa_s(modByte, currByte, 3, 16)) {
-				DEBUG("    [-] Error while checking for bad characters\n");
-
-				return "FAILED CHECK";
-			}
-
-			// required for any leading zero's
-			if (strlen(currByte) < 2) {
-				currByte[1] = currByte[0];
-				currByte[0] = '0';
-			}
-
-			DEBUG("    Current module base address second most significant byte: \\x%s\n", currByte);
-
-			if (nullptr != strstr(badChars, currByte)) {
-				DEBUG("    Bad characters: %s\n", badChars);
-
+			if (verifyByte(badChars, modByte)) {
 				return "*BADCHARS";
 			}
 		}
