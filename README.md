@@ -34,6 +34,7 @@ Original work all goes to d0c-s4vage for an amazing tool!
 
              by Nephi Johnson (d0c_s4vage)
                       N for gnarly!
+
             Additional Capabilities Added by
                @TheCyberBebop & @Kerpanic
 
@@ -60,40 +61,39 @@ Usage:  !nmod [/b [hex_values] /v /help]
 
     help   -  Who knows what this might do.  I wouldn't try it if
     /?        I were you though.
-
 0:004> !nmod /b \x00\x0a\x0d\x1a\x20
 |Base   |Top     |Size    |Module              |Bad Characters |Rebase  |Potential    |SafeSEH |GS |ASLR |DEP |System File |Path
 --------------------------------------------------------------------------------------------------------------------------------
 00400000 0054d000 0014d000 DVDXPlayer           *BADCHARS                              OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\DVDXPlayer.EXE
-02480000 024a9000 00029000 PowerManagementCtrl                  *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\PowerManagementCtrl.dll
-024e0000 0250c000 0002c000 FileAssocator                        *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\FileAssocator.dll
-02510000 02520000 00010000 QTMediaControl                       *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\QTMediaControl.dll
-02530000 02544000 00014000 RealMediaControl                     *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\RealMediaControl.dll
-02690000 026a4000 00014000 applog                               *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\applog.dll
-026c0000 026f0000 00030000 VideoWindow                          *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\VideoWindow.dll
-02930000 02946000 00016000 DibLibDll                            *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\DibLibDll.dll
-02950000 0297a000 0002a000 AudioProcess                         *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\AudioProcess.dll
-02990000 029dd000 0004d000 RecorderCtrl                         *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\RecorderCtrl.dll
+02300000 0232c000 0002c000 FileAssocator                        *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\FileAssocator.dll
+026d0000 026f9000 00029000 PowerManagementCtrl                  *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\PowerManagementCtrl.dll
+02730000 02740000 00010000 QTMediaControl                       *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\QTMediaControl.dll
+02740000 02754000 00014000 RealMediaControl                     *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\RealMediaControl.dll
+027a0000 027b4000 00014000 applog                               *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\applog.dll
+029f0000 02a06000 00016000 DibLibDll                            *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\DibLibDll.dll
+02a20000 02a50000 00030000 VideoWindow                          *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\VideoWindow.dll
+02a60000 02a8a000 0002a000 AudioProcess                         *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\AudioProcess.dll
+02aa0000 02aed000 0004d000 RecorderCtrl                         *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\RecorderCtrl.dll
 02b00000 02b8f000 0008f000 FileConverter                        *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\FileConverter.dll
-02ba0000 02bb4000 00014000 ProfileStore                         *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\ProfileStore.DLL
-02bd0000 02beb000 0001b000 mlutil                               *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\mlutil.dll
-02c50000 02cb8000 00068000 ProfileManager                       *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\ProfileManager.dll
+02bb0000 02bc4000 00014000 ProfileStore                         *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\ProfileStore.DLL
+02be0000 02bfb000 0001b000 mlutil                               *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\mlutil.dll
+02c40000 02ca8000 00068000 ProfileManager                       *REBASED *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\ProfileManager.dll
 10000000 10018000 00018000 SkinScrollBar                                 *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\SkinScrollBar.Dll
-55d20000 55d4c000 0002c000 oledlg                                                      ON       /GS *ASLR *DEP True         C:\Windows\SYSTEM32\oledlg.dll
-55d50000 55dbd000 0006d000 WINSPOOL                                                    ON       /GS *ASLR *DEP True         C:\Windows\SYSTEM32\WINSPOOL.DRV
-55dc0000 55f5a000 0019a000 QUARTZ                                                      ON       /GS *ASLR *DEP True         C:\Windows\SYSTEM32\QUARTZ.dll
-567d0000 567e6000 00016000 asycfilt                                                    ON       /GS *ASLR *DEP True         C:\Windows\system32\asycfilt.dll
-57610000 57629000 00019000 OLEPRO32                                                    ON       /GS *ASLR *DEP True         C:\Windows\SYSTEM32\OLEPRO32.DLL
+55ed0000 5606a000 0019a000 QUARTZ                                                      ON       /GS *ASLR *DEP True         C:\Windows\SYSTEM32\QUARTZ.dll
+57610000 5767d000 0006d000 WINSPOOL                                                    ON       /GS *ASLR *DEP True         C:\Windows\SYSTEM32\WINSPOOL.DRV
 59210000 59238000 00028000 WINMM                                                       ON       /GS *ASLR *DEP True         C:\Windows\SYSTEM32\WINMM.dll
 60300000 603a4000 000a4000 Configuration                                               OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\Configuration.dll
 61380000 61414000 00094000 TextShaping                                                 ON       /GS *ASLR *DEP True         C:\Windows\SYSTEM32\TextShaping.dll
 61600000 6169b000 0009b000 EPG                                                         OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\EPG.dll
+62760000 62776000 00016000 asycfilt                                                    ON       /GS *ASLR *DEP True         C:\Windows\system32\asycfilt.dll
+62780000 62799000 00019000 OLEPRO32                                                    ON       /GS *ASLR *DEP True         C:\Windows\SYSTEM32\OLEPRO32.DLL
+627f0000 6281c000 0002c000 oledlg                                                      ON       /GS *ASLR *DEP True         C:\Windows\SYSTEM32\oledlg.dll
 64000000 6407a000 0007a000 MediaPlayerCtrl                                             OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\MediaPlayerCtrl.dll
 64100000 64128000 00028000 NetReg                                                      OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\NetReg.dll
 64a00000 64a06000 00006000 MSIMG32                                                     NO_SEH   /GS *ASLR *DEP True         C:\Windows\SYSTEM32\MSIMG32.dll
 65b40000 65f9a000 0045a000 WININET                                                     ON       /GS *ASLR *DEP True         C:\Windows\SYSTEM32\WININET.dll
 668b0000 668e2000 00032000 iphlpapi                                                    ON       /GS *ASLR *DEP True         C:\Windows\SYSTEM32\iphlpapi.dll
-67000000 67010000 00010000 VersionInfo                                   *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\VersionInfo.dll
+67000000 67010000 00010000 VersionInfo          *BADCHARS                *COULD_REBASE OFF                     False        C:\Program Files (x86)\Aviosoft\DVD X Player 5.5 Professional\VersionInfo.dll
 67de0000 67ded000 0000d000 UMPDC                                                       ON       /GS *ASLR *DEP True         C:\Windows\SYSTEM32\UMPDC.dll
 67df0000 67e34000 00044000 powrprof                                                    ON       /GS *ASLR *DEP True         C:\Windows\SYSTEM32\powrprof.dll
 6b4d0000 6b4e8000 00018000 profapi                                                     ON       /GS *ASLR *DEP True         C:\Windows\SYSTEM32\profapi.dll
@@ -145,6 +145,6 @@ Unloaded modules:
 *DEP/*ASLR means that these modules are compatible with ASLR/DEP
 *COULD_REBASE means that the module has the same base address of another loaded module
 *REBASED means the module was rebased and the current base address differs from the original
-*BADCHARS are *ONLY* checked agaisnt the most significant byte!
+*BADCHARS are only checked agaisnt the module base MSB and second MSB, depending on size!
 
 ```
